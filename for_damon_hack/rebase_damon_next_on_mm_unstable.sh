@@ -37,10 +37,16 @@ then
 	exit 0
 fi
 
-git branch -M damon/next.old damon/next.old2
-git branch -m damon/next damon/next.old
 cp "$bindir/unmerged_commits.sh" ./
-git checkout akpm.korg.mm/mm-unstable -b damon/next
-commits_to_pick=$(./unmerged_commits.sh "$old_mm_unstable..damon/next.old" \
+git checkout akpm.korg.mm/mm-unstable -b damon/next.new
+commits_to_pick=$(./unmerged_commits.sh "$old_mm_unstable..damon/next" \
 	"$mainline_base..$new_mm_unstable")
-git cherry-pick --allow-empty $commits_to_pick
+if ! git cherry-pick --allow-empty $commits_to_pick
+then
+	echo "Cherry-pick failed."
+	echo "Rename damon/next.new to damon/next after resolving the issue"
+	exit 1
+fi
+
+git branch -M damon/next damon/next.old
+git branch -M damon/next.new damon/next
