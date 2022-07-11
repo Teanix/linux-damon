@@ -2,7 +2,7 @@
 VERSION = 5
 PATCHLEVEL = 16
 SUBLEVEL = 0
-EXTRAVERSION = -rc1-damon
+EXTRAVERSION = -rc1-damon-t1
 NAME = Trick or Treat
 
 # *DOCUMENTATION*

@@ -131,12 +131,20 @@ unsigned int trace_call_bpf(struct trace_event_call *call, void *ctx)
 
 	return ret;
 }
-
+   
 #ifdef CONFIG_BPF_KPROBE_OVERRIDE
 BPF_CALL_2(bpf_override_return, struct pt_regs *, regs, unsigned long, rc)
 {
-	regs_set_return_value(regs, rc);
-	override_function_with_return(regs);
+	if(rc==0)//修改返回值
+	{
+		regs_set_return_value(regs, rc);
+		override_function_with_return(regs);
+	}
+	else //修改入参 
+	{
+		regs_set_return_value(regs, rc);
+	}
+	
 	return 0;
 }
 

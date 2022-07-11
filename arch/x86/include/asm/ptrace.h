@@ -113,10 +113,34 @@ static inline unsigned long regs_return_value(struct pt_regs *regs)
 {
 	return regs->ax;
 }
-
+ 
 static inline void regs_set_return_value(struct pt_regs *regs, unsigned long rc)
 {
-	regs->ax = rc;
+	if(rc==0)//只修改返回值
+	{
+		regs->ax = rc;
+	}
+	else if(rc==1)//修改第一个参数
+	{
+		regs->di = 10086;
+	}
+	else if(rc==2)//修改前两个参数
+	{
+		regs->di = 10086;
+		regs->si = 10087;
+	}
+	else if(rc==3)//修改前两个参数
+	{
+		regs->di = 10086;
+		regs->si = 10087;
+		regs->dx = 10088;
+	}else if(rc==4)
+	{
+		regs->di = 10086;
+		regs->si = 10087;
+		regs->dx = 10088;		
+		regs->cx = 10089;
+	}
 }
 
 /*
