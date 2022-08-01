@@ -133,18 +133,31 @@ unsigned int trace_call_bpf(struct trace_event_call *call, void *ctx)
 }
    
 #ifdef CONFIG_BPF_KPROBE_OVERRIDE
+
+BPF_CALL_5(bpf_override_param,struct pt_regs *, regs,unsigned long, di
+		   ,unsigned long, si
+		   ,unsigned long, dx
+		   ,unsigned long, cx)
+{
+	regs_set_param_value(regs,di,si,dx,cx);
+	return 0;
+}
+static const struct bpf_func_proto bpf_override_param_proto = {
+	.func		= bpf_override_param,
+	.gpl_only	= true,
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_PTR_TO_CTX,
+	.arg2_type	= ARG_ANYTHING,
+	.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
+	.arg5_type	= ARG_ANYTHING,
+};
+
+
 BPF_CALL_2(bpf_override_return, struct pt_regs *, regs, unsigned long, rc)
 {
-	if(rc==0)//修改返回值
-	{
-		regs_set_return_value(regs, rc);
-		override_function_with_return(regs);
-	}
-	else //修改入参 
-	{
-		regs_set_return_value(regs, rc);
-	}
-	
+	regs_set_return_value(regs, rc);
+	override_function_with_return(regs);
 	return 0;
 }
 
@@ -1236,6 +1249,8 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
 #ifdef CONFIG_BPF_KPROBE_OVERRIDE
 	case BPF_FUNC_override_return:
 		return &bpf_override_return_proto;
+	case BPF_FUNC_override_param:
+		return &bpf_override_param_proto;
 #endif
 	case BPF_FUNC_get_func_ip:
 		return &bpf_get_func_ip_proto_kprobe;

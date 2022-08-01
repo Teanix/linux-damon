@@ -14,11 +14,6 @@ int main(int argc, char **argv)
 	int ret = 0;
 	FILE *f;
 
-	if (!argv[1]) {
-		fprintf(stderr, "ERROR: Run with the btrfs device argument!\n");
-		return 0;
-	}
-
 	snprintf(filename, sizeof(filename), "%s_kern.o", argv[0]);
 	obj = bpf_object__open_file(filename, NULL);
 	if (libbpf_get_error(obj)) {
@@ -45,9 +40,11 @@ int main(int argc, char **argv)
 		goto cleanup;
 	}
 
-	snprintf(command, 256, "mount %s tmpmnt/", argv[1]);
-	f = popen(command, "r");
-	ret = pclose(f);
+	for (;;) {
+		/* trigger our BPF program */
+		fprintf(stderr, ".");
+		sleep(1);
+	}
 
 cleanup:
 	bpf_link__destroy(link);

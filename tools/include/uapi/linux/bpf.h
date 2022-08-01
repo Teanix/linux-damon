@@ -4999,6 +4999,7 @@ union bpf_attr {
 	FN(perf_prog_read_value),	\
 	FN(getsockopt),			\
 	FN(override_return),		\
+	FN(override_param),		\
 	FN(sock_ops_cb_flags_set),	\
 	FN(msg_redirect_map),		\
 	FN(msg_apply_bytes),		\

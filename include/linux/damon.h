@@ -22,7 +22,7 @@
  * @start:	Start address of the region (inclusive).
  * @end:	End address of the region (exclusive).
  */
-struct damon_addr_range {
+struct damon_addr_range {//地址区域
 	unsigned long start;
 	unsigned long end;
 };
@@ -40,10 +40,10 @@ struct damon_addr_range {
  * regions are merged into a new region, both @nr_accesses and @age of the new
  * region are set as region size-weighted average of those of the two regions.
  */
-struct damon_region {
-	struct damon_addr_range ar;
-	unsigned long sampling_addr;
-	unsigned int nr_accesses;
+struct damon_region {//监控目标区域
+	struct damon_addr_range ar;//其中的地址区域
+	unsigned long sampling_addr;//下次访问检查的地址？
+	unsigned int nr_accesses; //该区域的访问频率
 	struct list_head list;
 
 	unsigned int age;
