@@ -2,9 +2,11 @@
 #ifndef _ASM_X86_PTRACE_H
 #define _ASM_X86_PTRACE_H
 
+// #include <linux/kernel.h>
 #include <asm/segment.h>
 #include <asm/page_types.h>
 #include <uapi/asm/ptrace.h>
+
 
 #ifndef __ASSEMBLY__
 #ifdef __i386__
@@ -98,6 +100,7 @@ struct pt_regs {
 #endif
 
 #include <asm/proto.h>
+#include <linux/kernel.h>
 
 struct cpuinfo_x86;
 struct task_struct;
@@ -108,6 +111,19 @@ extern unsigned long
 convert_ip_to_linear(struct task_struct *child, struct pt_regs *regs);
 extern void send_sigtrap(struct pt_regs *regs, int error_code, int si_code);
 
+#define p_arg4 0x1
+#define p_arg3 p_arg4 << 1
+#define p_arg2 p_arg4 << 2
+#define p_arg1 p_arg4 << 3
+
+
+struct func_param{
+	unsigned long func_arg1;
+	unsigned long func_arg2;
+	unsigned long func_arg3;
+	unsigned long func_arg4;
+};
+
 
 static inline unsigned long regs_return_value(struct pt_regs *regs)
 {
@@ -116,18 +132,19 @@ static inline unsigned long regs_return_value(struct pt_regs *regs)
  
 static inline void regs_set_return_value(struct pt_regs *regs, unsigned long rc)
 {
-	regs->ax = rc; 
+	regs->ax = rc;  
 }
 
-static inline void regs_set_param_value(struct pt_regs *regs, unsigned long di,
-										unsigned long si,
-										unsigned long dx,
-										unsigned long cx)
+static inline void regs_set_param_value(struct pt_regs *regs, unsigned int param_select, struct func_param* func_param)
 {
-	regs->di = di;
-	regs->si = si;
-	regs->dx = dx;
-	regs->cx = cx;
+	if(p_arg1 & param_select)
+		regs->di = func_param->func_arg1;
+	if(p_arg2 & param_select)
+		regs->si = func_param->func_arg2;
+	if(p_arg3 & param_select)
+		regs->dx = func_param->func_arg3;
+	if(p_arg4 & param_select)
+		regs->cx = func_param->func_arg4;
 }
 
 /*

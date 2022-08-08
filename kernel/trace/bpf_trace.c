@@ -133,15 +133,22 @@ unsigned int trace_call_bpf(struct trace_event_call *call, void *ctx)
 }
    
 #ifdef CONFIG_BPF_KPROBE_OVERRIDE
-
-BPF_CALL_5(bpf_override_param,struct pt_regs *, regs,unsigned long, di
-		   ,unsigned long, si
-		   ,unsigned long, dx
-		   ,unsigned long, cx)
+BPF_CALL_3(bpf_override_param,struct pt_regs *, regs,unsigned int, param_select,
+		struct func_param*,func_param)
 {
-	regs_set_param_value(regs,di,si,dx,cx);
+	if((param_select >> 4) > 0)
+		/*
+		* The maximum value of param_select is b'1111 in binary, 
+		* which supports four input parameters.
+		*/
+		goto out;
+	
+	regs_set_param_value(regs,param_select,func_param);
+	
+ out:
 	return 0;
 }
+
 static const struct bpf_func_proto bpf_override_param_proto = {
 	.func		= bpf_override_param,
 	.gpl_only	= true,
@@ -149,14 +156,12 @@ static const struct bpf_func_proto bpf_override_param_proto = {
 	.arg1_type	= ARG_PTR_TO_CTX,
 	.arg2_type	= ARG_ANYTHING,
 	.arg3_type	= ARG_ANYTHING,
-	.arg4_type	= ARG_ANYTHING,
-	.arg5_type	= ARG_ANYTHING,
 };
 
 
 BPF_CALL_2(bpf_override_return, struct pt_regs *, regs, unsigned long, rc)
 {
-	regs_set_return_value(regs, rc);
+	regs_set_return_value(regs, rc); 
 	override_function_with_return(regs);
 	return 0;
 }

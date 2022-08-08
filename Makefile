@@ -2,7 +2,7 @@
 VERSION = 5
 PATCHLEVEL = 16
 SUBLEVEL = 0
-EXTRAVERSION = -rc1-damon-t2
+EXTRAVERSION = -rc1-damon-t0801-2
 NAME = Trick or Treat
 
 # *DOCUMENTATION*
@@ -513,7 +513,8 @@ LINUXINCLUDE    := \
 KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE
 KBUILD_CFLAGS   := -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE \
-		   -Werror=implicit-function-declaration -Werror=implicit-int \
+		   #-Werror=implicit-function-declaration 
+		   -Werror=implicit-int \
 		   -Werror=return-type -Wno-format-security \
 		   -std=gnu89
 KBUILD_CPPFLAGS := -D__KERNEL__

@@ -10,9 +10,7 @@ int main(int argc, char **argv)
 	struct bpf_program *prog;
 	struct bpf_object *obj;
 	char filename[256];
-	char command[256];
 	int ret = 0;
-	FILE *f;
 
 	snprintf(filename, sizeof(filename), "%s_kern.o", argv[0]);
 	obj = bpf_object__open_file(filename, NULL);

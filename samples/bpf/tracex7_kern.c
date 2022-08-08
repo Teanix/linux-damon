@@ -3,13 +3,13 @@
 #include <linux/version.h>
 #include <bpf/bpf_helpers.h>
 
+
 SEC("kprobe/test_input_4")
 int bpf_prog1(struct pt_regs *ctx)
 {
-	unsigned long rc = -12;
-
-	// bpf_override_return(ctx, rc);
-	bpf_override_param(ctx, 10086,10087,10088,10089);
+	unsigned int select = 8;
+	bpf_override_param(ctx,8,-12);
+	// bpf_override_return(ctx,-12);
 	return 0;
 }
 
